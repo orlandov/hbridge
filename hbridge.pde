@@ -5,21 +5,21 @@ byte motor_pin0 = 2;
 byte motor_pin1 = 3;
 
 // potentiometer
-byte pot_pin = 4;
+byte pot_pin = 16;
 
 // direction switch
 byte switch_pin = 4;
-
-//declare the state variable
-byte state = 0;
 
 void setup() {
     // setup the motor control pins as outputs
     pinMode(motor_pin0, OUTPUT);
     pinMode(motor_pin1, OUTPUT);
     pinMode(pwm_pin, OUTPUT);
+
     pinMode(switch_pin, INPUT);
     pinMode(pot_pin, INPUT);
+
+    // start the motor on full to get it going
     analogWrite(pwm_pin, 255);
 }
 
