@@ -45,7 +45,7 @@ void setup() {
 struct motor {
     byte enabled;
     byte output0;
-    byte output
+    byte output1;
 };
 
 void drive_forwards() {
