@@ -11,19 +11,19 @@
     * output2
 */
 
-byte motor0_pwm = 9;
-byte motor0_pin0 = 2;
-byte motor0_pin1 = 3;
+const byte motor0_pwm = 9;
+const byte motor0_pin0 = 2;
+const byte motor0_pin1 = 3;
 
-byte motor1_pwm = 6;
-byte motor1_pin0 = 4;
-byte motor1_pin1 = 5;
+const byte motor1_pwm = 6;
+const byte motor1_pin0 = 5;
+const byte motor1_pin1 = 4;
 
 // potentiometer
-byte pot_pin = 2;
+const byte pot_pin = 2;
 
 // direction switch
-byte switch_pin = 7;
+const byte switch_pin = 7;
 
 void setup() {
     // setup the motor control pins as outputs
@@ -41,27 +41,56 @@ void setup() {
     analogWrite(motor1_pwm, 255);
 }
 
+// future refactor
+struct motor {
+    byte enabled;
+    byte output0;
+    byte output;
+};
+
+void drive_forwards() {
+    digitalWrite(motor0_pin0, HIGH);
+    digitalWrite(motor0_pin1, LOW);
+    digitalWrite(motor1_pin0, HIGH);
+    digitalWrite(motor1_pin1, LOW);
+}
+
+void drive_backwards() {
+    digitalWrite(motor0_pin0, LOW);
+    digitalWrite(motor0_pin1, HIGH);
+    digitalWrite(motor1_pin0, LOW);
+    digitalWrite(motor1_pin1, HIGH);
+}
+
+int direction = 0;
+bool pressed = 0;
+bool prev_pressed = 0;
+
 void loop() {
     // read the pot
     byte duty_cycle = analogRead(pot_pin) / 4;
-    int direction = digitalRead(switch_pin);
 
-    analogWrite(motor0_pwm, duty_cycle);
-    analogWrite(motor1_pwm, duty_cycle);
-    if (direction) {
-        digitalWrite(motor0_pin0, LOW);
-        digitalWrite(motor0_pin1, HIGH);
-        digitalWrite(motor1_pin0, LOW);
-        digitalWrite(motor1_pin1, HIGH);
+    // toggle the directions
+    pressed = digitalRead(switch_pin);
+    delay(10);
+    if (pressed
+        && (pressed == digitalRead(switch_pin))
+        && pressed != prev_pressed) {
+        direction = !direction;
     }
     else {
-        digitalWrite(motor0_pin1, LOW);
-        digitalWrite(motor0_pin0, HIGH);
-        digitalWrite(motor1_pin0, HIGH);
-        digitalWrite(motor1_pin1, LOW);
+        analogWrite(motor0_pwm, duty_cycle);
+        analogWrite(motor1_pwm, duty_cycle);
     }
-}
 
+    if (direction) {
+        drive_backwards();
+    }
+    else {
+        drive_forwards();
+    }
+    prev_pressed = pressed;
+}
 
 
 
