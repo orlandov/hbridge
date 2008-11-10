@@ -69,18 +69,16 @@ bool prev_pressed = 0;
 void loop() {
     // read the pot
     byte duty_cycle = analogRead(pot_pin) / 4;
+    analogWrite(motor0_pwm, duty_cycle);
+    analogWrite(motor1_pwm, duty_cycle);
 
     // toggle the directions
-    pressed = digitalRead(switch_pin);
+    prev_pressed = pressed;
     delay(10);
+    pressed = digitalRead(switch_pin);
     if (pressed
-        && (pressed == digitalRead(switch_pin))
-        && pressed != prev_pressed) {
+        && (prev_pressed == 0)) {
         direction = !direction;
-    }
-    else {
-        analogWrite(motor0_pwm, duty_cycle);
-        analogWrite(motor1_pwm, duty_cycle);
     }
 
     if (direction) {
@@ -89,7 +87,6 @@ void loop() {
     else {
         drive_forwards();
     }
-    prev_pressed = pressed;
 }
 
 
